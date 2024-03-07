@@ -3,18 +3,14 @@
 #include <iostream>
 
 int main() {
-    // Load trained model
-    // Load trained model
     NeuralNet model(784, 500, 10);
-    torch::load(model, "mnist_model.pt");
+    model.load_model("mnist_model.pt");
 
-    // Download MNIST test dataset
     auto test_dataset = torch::data::datasets::MNIST("./mnist-data", torch::data::datasets::MNIST::Mode::kTest)
                             .map(torch::data::transforms::Stack<>());
     auto test_loader = torch::data::make_data_loader<torch::data::samplers::SequentialSampler>(
                             std::move(test_dataset));
 
-    // Evaluation
     model.eval();
     torch::NoGradGuard no_grad;
     int64_t correct = 0;

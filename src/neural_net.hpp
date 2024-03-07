@@ -1,15 +1,11 @@
 #pragma once
 
-// Add the necessary include path for the Torch library
 #include <torch/torch.h>
 
 struct NeuralNet : torch::nn::Module {
     NeuralNet(int64_t input_size, int64_t hidden_size, int64_t num_classes) :
-        fc1(input_size, hidden_size),
-        fc2(hidden_size, num_classes) {
-        register_module("fc1", fc1);
-        register_module("fc2", fc2);
-    }
+        fc1(register_module("fc1", torch::nn::Linear(input_size, hidden_size))),
+        fc2(register_module("fc2", torch::nn::Linear(hidden_size, num_classes))) {}
 
     torch::Tensor forward(torch::Tensor x) {
         x = torch::relu(fc1->forward(x.view({x.size(0), -1})));
@@ -17,12 +13,12 @@ struct NeuralNet : torch::nn::Module {
         return torch::log_softmax(x, 1);
     }
 
-    void serialize(torch::serialize::InputArchive& archive) override {
-        archive(fc1, fc2);
+    void save_model(const std::string& filename) {
+        torch::save(*this, filename);
     }
 
-    void serialize(torch::serialize::OutputArchive& archive) const override {
-        archive(fc1, fc2);
+    void load_model(const std::string& filename) {
+        torch::load(*this, filename);
     }
 
     torch::nn::Linear fc1, fc2;
