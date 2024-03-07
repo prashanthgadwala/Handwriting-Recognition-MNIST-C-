@@ -1,1 +1,7 @@
-echo "This script should read a dataset image into a tensor and pretty-print it into a text file..."
+#!/bin/bash
+
+# Set directory
+cd /Users/prashanthgadwala/Documents/Study\ material/Advance\ PT/ProjectFinalNN/ws2023-group-15-idkcoding
+
+# Execute read_dataset_images script
+./read_dataset_images
